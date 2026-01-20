@@ -15,7 +15,8 @@ const { commands } = require('./commandRegistry');
 const { DISCORD_TOKEN, CLIENT_ID, BOT_OWNER_IDS, ownerIds, RECENT_HISTORY_SIZE, MAX_CHANNELS_IN_MEMORY, MAX_CONSECUTIVE_FAILURES, OWNER_MIN_INTERVAL, REGULAR_MIN_INTERVAL, MAX_INTERVAL, DEFAULT_REDGIFS_COUNT, DEFAULT_BOORU_COUNT, validateConfig, getMinInterval, validateInterval } = require('./config');
 const { loadAdminBlacklist, isTagBlacklisted, addAdminBlacklist, removeAdminBlacklist, listAdminBlacklist } = require('./admin');
 
-
+validateConfig();
+loadAdminBlacklist();
 
 // NEW: Get API-specific tags
 function getApiTags(apiName) {
