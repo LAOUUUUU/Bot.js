@@ -6,7 +6,7 @@ const { Client, GatewayIntentBits, ActivityType } = require('discord.js');
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v10');
 const apiTagData = require('./api-tags.json'); // NEW: API-specific tags
-const { log, errLog, API_POOL, IMAGE_EXTS, VIDEO_EXTS, getRandomGif, isChannelNSFW } = require('./utils');
+const { log, errLog, API_POOL, IMAGE_EXTS, VIDEO_EXTS, getRandomGif, isChannelNSFW, recentGifs} = require('./utils');
 const { redgifs, rule34, gelbooru, e621, realbooru, hypnohub, yandere, konachan, danbooru } = require('./apis');
 const { userPreferences, loadUserPreferences, saveUserPreferences, getUserPrefs } = require('./prefs');
 const { sendMediaSmart } = require('./media');
@@ -40,7 +40,6 @@ process.on('uncaughtException', (err) => {
 
 
 // ---------- In-memory structures ----------
-const recentGifs = new Map();
 const activeAutos = new Map();
 
 const stats = {

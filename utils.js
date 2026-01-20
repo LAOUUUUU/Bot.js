@@ -3,13 +3,13 @@
 // admin.js
 // Handles admin blacklist loading and checks
 
-// ... rest of the file remains the same
 const {MAX_CHANNELS_IN_MEMORY, RECENT_HISTORY_SIZE} = require("./config");
 const log = (...args) => console.log(new Date().toISOString(), ...args);
 const errLog = (...args) => console.error(new Date().toISOString(), ...args);
 const API_POOL = ['redgifs', 'rule34', 'gelbooru', 'e621', 'realbooru', 'hypnohub', 'yandere', 'konachan', 'danbooru'];
 const IMAGE_EXTS = ['.jpg', '.jpeg', '.png', '.webp'];
 const VIDEO_EXTS = ['.mp4', '.webm', '.mov'];
+const recentGifs = new Map();
 
 function getRandomGif(items, channelId,recentGifs) {
     if (!items?.length) return null;
@@ -97,5 +97,6 @@ module.exports = {
     IMAGE_EXTS,
     VIDEO_EXTS,
     getRandomGif,
-    isChannelNSFW
+    isChannelNSFW,
+    recentGifs
 };
