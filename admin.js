@@ -1,8 +1,11 @@
 // admin.js
 // Handles admin blacklist loading and checks
+// admin.js
+// Handles admin blacklist loading and checks
+
 
 const { log, errLog } = require('./utils');
-
+const { getUserPrefs } = require('./prefs'); // ADD THIS LINE
 const adminBlacklist = new Set();
 
 function loadAdminBlacklist() {

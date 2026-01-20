@@ -79,6 +79,94 @@ if (REGISTER_COMMANDS) {
 }
 
 // ---------- Auto loop ----------
+// Add this function to bot.js, before the startAuto function
+
+// Add this to bot.js, before startAuto()
+
+async function postRandomToChannel(channel, apiChoice, tag, userId, filterType = 'any', stats) {
+  try {
+    let selectedApi = apiChoice === 'any'
+        ? API_POOL[Math.floor(Math.random() * API_POOL.length)]
+        : apiChoice;
+
+    let searchTag = tag || getRandomTagForApi(selectedApi);
+
+    const blacklistCheck = isTagBlacklisted(searchTag, userId);
+    if (blacklistCheck.blocked) {
+      return { ok: false, error: `Tag blacklisted: ${blacklistCheck.reason}` };
+    }
+
+    const count = selectedApi === 'redgifs' ? DEFAULT_REDGIFS_COUNT : DEFAULT_BOORU_COUNT;
+    let posts = [];
+
+    switch (selectedApi) {
+      case 'redgifs':
+        posts = await redgifs.searchGifs(searchTag, count);
+        break;
+      case 'rule34':
+        posts = await rule34.searchPosts(searchTag, count);
+        break;
+      case 'gelbooru':
+        posts = await gelbooru.searchPosts(searchTag, count);
+        break;
+      case 'e621':
+        posts = await e621.searchPosts(searchTag, count);
+        break;
+      case 'realbooru':
+        posts = await realbooru.searchPosts(searchTag, count);
+        break;
+      case 'hypnohub':
+        posts = await hypnohub.searchPosts(searchTag, count);
+        break;
+      case 'yandere':
+        posts = await yandere.searchPosts(searchTag, count);
+        break;
+      case 'konachan':
+        posts = await konachan.searchPosts(searchTag, count);
+        break;
+      case 'danbooru':
+        posts = await danbooru.searchPosts(searchTag, count);
+        break;
+      default:
+        return { ok: false, error: 'Unknown API' };
+    }
+
+    if (!posts || posts.length === 0) {
+      return { ok: false, error: 'No results' };
+    }
+
+    if (filterType !== 'any') {
+      posts = posts.filter(p => {
+        const url = (p.file_url || '').toLowerCase();
+        if (filterType === 'gif') return url.endsWith('.gif');
+        if (filterType === 'image') return IMAGE_EXTS.some(ext => url.endsWith(ext));
+        if (filterType === 'video') return VIDEO_EXTS.some(ext => url.endsWith(ext));
+        return true;
+      });
+      if (posts.length === 0) {
+        return { ok: false, error: `No ${filterType} found` };
+      }
+    }
+
+    const chosen = getRandomGif(posts, channel.id);
+    if (!chosen) {
+      return { ok: false, error: 'All content recently seen' };
+    }
+
+    await sendMediaSmart(chosen, channel, `${selectedApi} - ${searchTag || 'random'}`);
+
+    stats.totalPosts++;
+    stats.postsByApi[selectedApi] = (stats.postsByApi[selectedApi] || 0) + 1;
+
+    return { ok: true };
+  } catch (err) {
+    errLog('[postRandom] error:', err);
+    stats.errors++;
+    return { ok: false, error: err.message };
+  }
+}
+
+
 async function startAuto(channel, userId, intervalSeconds, apiChoice = 'any', tag = '', filterType = 'any') {
   const cid = channel.id;
   if (activeAutos.has(cid)) {
