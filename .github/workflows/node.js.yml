@@ -27,5 +27,5 @@ jobs:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
     - run: npm install discord.js@latest
-    - run: npm axios dotenv
+    - run: npm i axios dotenv
     - run: node bot.js
