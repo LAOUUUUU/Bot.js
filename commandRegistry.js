@@ -133,7 +133,12 @@ const commands = [
                 { name: 'HypnoHub', value: 'hypnohub' },
                 { name: 'Yande.re', value: 'yandere' },
                 { name: 'Konachan', value: 'konachan' },
-                { name: 'Danbooru', value: 'danbooru' }
+                { name: 'Danbooru', value: 'danbooru' },
+                { name: 'Xbooru', value: 'xbooru' },                    
+                { name: 'Rule34Paheal', value: 'rule34paheal' },
+                { name: 'ATFBooru', value: 'atfbooru' },
+                { name: 'Behoimi', value: 'behoimi' },
+                { name: 'Reddit', value: 'reddit' }
             ))
         .addStringOption(o => o.setName('tag').setDescription('Optional tag/search or "favorite" to use your favorites').setRequired(false))
         .addStringOption(o => o.setName('type').setDescription('Filter by media type').setRequired(false)
@@ -177,5 +182,60 @@ const commands = [
             .addUserOption(o => o.setName('user').setDescription('User to set limit for').setRequired(true))
             .addIntegerOption(o => o.setName('interval').setDescription('Minimum interval in seconds').setRequired(true).setMinValue(30).setMaxValue(300)))
         .setDMPermission(false),
+    new SlashCommandBuilder().setName('xbooru').setDescription('Search Xbooru')
+        .addStringOption(o => o.setName('tags').setDescription('Tags to search (comma-separated for multiple)').setRequired(true))
+        .addStringOption(o => o.setName('type').setDescription('Filter by media type').setRequired(false)
+            .addChoices(
+                { name: 'Any', value: 'any' },
+                { name: 'GIF Only', value: 'gif' },
+                { name: 'Image Only', value: 'image' },
+                { name: 'Video Only', value: 'video' }
+            ))
+        .setDMPermission(false),
+
+    new SlashCommandBuilder().setName('rule34paheal').setDescription('Search Rule34.paheal')
+        .addStringOption(o => o.setName('tags').setDescription('Tags to search (space separated)').setRequired(true))
+        .addStringOption(o => o.setName('type').setDescription('Filter by media type').setRequired(false)
+            .addChoices(
+                { name: 'Any', value: 'any' },
+                { name: 'GIF Only', value: 'gif' },
+                { name: 'Image Only', value: 'image' },
+                { name: 'Video Only', value: 'video' }
+            ))
+        .setDMPermission(false),
+
+    new SlashCommandBuilder().setName('atfbooru').setDescription('Search ATFBooru')
+        .addStringOption(o => o.setName('tags').setDescription('Tags to search (comma-separated for multiple)').setRequired(true))
+        .addStringOption(o => o.setName('type').setDescription('Filter by media type').setRequired(false)
+            .addChoices(
+                { name: 'Any', value: 'any' },
+                { name: 'GIF Only', value: 'gif' },
+                { name: 'Image Only', value: 'image' },
+                { name: 'Video Only', value: 'video' }
+            ))
+        .setDMPermission(false),
+
+    new SlashCommandBuilder().setName('behoimi').setDescription('Search Behoimi')
+        .addStringOption(o => o.setName('tags').setDescription('Tags to search (comma-separated for multiple)').setRequired(true))
+        .addStringOption(o => o.setName('type').setDescription('Filter by media type').setRequired(false)
+            .addChoices(
+                { name: 'Any', value: 'any' },
+                { name: 'GIF Only', value: 'gif' },
+                { name: 'Image Only', value: 'image' },
+                { name: 'Video Only', value: 'video' }
+            ))
+        .setDMPermission(false),
+
+    new SlashCommandBuilder().setName('reddit').setDescription('Search Reddit NSFW subreddits')
+        .addStringOption(o => o.setName('subreddit').setDescription('Subreddit name (e.g., "nsfw" or "gonewild")').setRequired(false))
+        .addStringOption(o => o.setName('type').setDescription('Filter by media type').setRequired(false)
+            .addChoices(
+                { name: 'Any', value: 'any' },
+                { name: 'GIF Only', value: 'gif' },
+                { name: 'Image Only', value: 'image' },
+                { name: 'Video Only', value: 'video' }
+            ))
+        .setDMPermission(false),
 ].map(c => c.toJSON());
+
 module.exports = { commands };

@@ -784,6 +784,43 @@
       ]
     }
   },
+  "xbooru": {
+    "name": "Xbooru",
+    "tags": [
+      "1girl", "ahegao", "anal", "ass", "big_breasts", "blonde_hair",
+      "blowjob", "creampie", "cum", "futanari", "hentai", "lesbian",
+      "milf", "nude", "pussy", "sex", "yuri", "tentacles"
+    ]
+  },
+  "rule34paheal": {
+    "name": "Rule34 Paheal",
+    "tags": [
+      "1girl", "ahegao", "anal", "big_breasts", "blowjob", "creampie",
+      "cum", "futanari", "hentai", "pokemon", "sonic", "mlp", "furry",
+      "tentacles", "yuri", "yaoi"
+    ]
+  },
+  "atfbooru": {
+    "name": "ATFBooru",
+    "tags": [
+      "1girl", "loli", "shota", "blonde_hair", "flat_chest", "small_breasts",
+      "cute", "young", "petite", "swimsuit", "school_uniform"
+    ]
+  },
+  "behoimi": {
+    "name": "Behoimi",
+    "tags": [
+      "1girl", "2girls", "blonde_hair", "blue_eyes", "breasts", "cleavage",
+      "long_hair", "short_hair", "swimsuit", "bikini", "lingerie", "nude"
+    ]
+  },
+  "reddit": {
+    "name": "Reddit NSFW",
+    "tags": [
+      "nsfw", "gonewild", "realgirls", "adorableporn", "paag", "bigasses",
+      "boobs", "ass", "pussy", "amateur", "milf", "petite", "curvy"
+    ]
+  },
   "tag_categories": {
     "safe_general": [
       "1girl",

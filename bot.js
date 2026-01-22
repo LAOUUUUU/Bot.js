@@ -5,9 +5,9 @@
 const { Client, GatewayIntentBits, ActivityType } = require('discord.js');
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v10');
-const apiTagData = require('./api-tags.json'); // NEW: API-specific tags
+const apiTagData = require('./api-tags.json');
 const { log, errLog, API_POOL, IMAGE_EXTS, VIDEO_EXTS, getRandomGif, isChannelNSFW, recentGifs} = require('./utils');
-const { redgifs, rule34, gelbooru, e621, realbooru, hypnohub, yandere, konachan, danbooru } = require('./apis');
+const { redgifs, rule34, gelbooru, e621, realbooru, hypnohub, yandere, konachan, danbooruxbooru, rule34paheal, atfbooru, behoimi, reddit } = require('./apis');
 const { userPreferences, loadUserPreferences, saveUserPreferences, getUserPrefs } = require('./prefs');
 const { sendMediaSmart } = require('./media');
 const { createDispatcher } = require('./commands');
@@ -18,12 +18,12 @@ const { loadAdminBlacklist, isTagBlacklisted, addAdminBlacklist, removeAdminBlac
 validateConfig();
 loadAdminBlacklist();
 
-// NEW: Get API-specific tags
+// Get API-specific tags
 function getApiTags(apiName) {
   return apiTagData.api_tags[apiName]?.tags || [];
 }
 
-// NEW: Get a random tag for a specific API
+// Get a random tag for a specific API
 function getRandomTagForApi(apiName) {
   const tags = getApiTags(apiName);
   if (tags.length === 0) {
@@ -33,14 +33,13 @@ function getRandomTagForApi(apiName) {
   return tags[Math.floor(Math.random() * tags.length)];
 }
 
-// ---------- Process Error Handling ----------
+// Process Error Handling
 process.on('unhandledRejection', (r) => errLog('unhandledRejection', r));
 process.on('uncaughtException', (err) => {
   errLog('uncaughtException', err);
 });
 
-
-// ---------- In-memory structures ----------
+// In-memory structures
 const activeAutos = new Map();
 
 const stats = {
@@ -51,10 +50,10 @@ const stats = {
   startTime: Date.now()
 };
 
-// ---------- Discord client ----------
+// Discord client
 const client = new Client({ intents: GatewayIntentBits.Guilds });
 
-// ---------- Command registration ----------
+// Command registration
 const REGISTER_COMMANDS = process.env.REGISTER_COMMANDS === 'true';
 if (REGISTER_COMMANDS) {
   const rest = new REST({ version: '10' }).setToken(DISCORD_TOKEN);
@@ -78,12 +77,8 @@ if (REGISTER_COMMANDS) {
   })();
 }
 
-// ---------- Auto loop ----------
-// Add this function to bot.js, before the startAuto function
-
-// Add this to bot.js, before startAuto()
-
-async function postRandomToChannel(channel, apiChoice, tag, userId, filterType = 'any', stats) {
+// Post random content to channel
+async function postRandomToChannel(channel, apiChoice, tag, userId, filterType = 'any') {
   try {
     let selectedApi = apiChoice === 'any'
         ? API_POOL[Math.floor(Math.random() * API_POOL.length)]
@@ -127,7 +122,24 @@ async function postRandomToChannel(channel, apiChoice, tag, userId, filterType =
       case 'danbooru':
         posts = await danbooru.searchPosts(searchTag, count);
         break;
-      default:
+      case 'xbooru':
+        posts = await xbooru.searchPosts(searchTag, count);
+        break;
+      case 'rule34paheal':
+        posts = await rule34paheal.searchPosts(searchTag, count);
+        break;
+      case 'atfbooru':
+        posts = await atfbooru.searchPosts(searchTag, count);
+        break;
+      case 'behoimi':
+        posts = await behoimi.searchPosts(searchTag, count);
+        break;
+      case 'reddit':
+        // For Reddit, use subreddit name as "tag"
+        const subreddit = searchTag || 'nsfw+gonewild+realgirls';
+        posts = await reddit.searchPosts(subreddit, count);
+        break;
+        default:
         return { ok: false, error: 'Unknown API' };
     }
 
@@ -166,7 +178,7 @@ async function postRandomToChannel(channel, apiChoice, tag, userId, filterType =
   }
 }
 
-
+// Auto-posting function
 async function startAuto(channel, userId, intervalSeconds, apiChoice = 'any', tag = '', filterType = 'any') {
   const cid = channel.id;
   if (activeAutos.has(cid)) {
@@ -208,7 +220,7 @@ async function startAuto(channel, userId, intervalSeconds, apiChoice = 'any', ta
         log('[auto] using favorite tag:', currentTag);
       }
 
-      const res = await postRandomToChannel(channel, apiChoice, currentTag, userId, filterType,stats);
+      const res = await postRandomToChannel(channel, apiChoice, currentTag, userId, filterType);
 
       if (!res.ok) {
         consecutiveFailures += 1;
@@ -252,7 +264,7 @@ async function startAuto(channel, userId, intervalSeconds, apiChoice = 'any', ta
       log('[auto] using favorite tag for initial post:', currentTag);
     }
 
-    const initial = await postRandomToChannel(channel, apiChoice, currentTag, userId, filterType,stats);
+    const initial = await postRandomToChannel(channel, apiChoice, currentTag, userId, filterType);
     if (!initial.ok) {
       consecutiveFailures += 1;
       log('[auto] initial post failed for', cid, initial.error);
@@ -288,9 +300,7 @@ function stopAuto(channelId) {
   }
 }
 
-// ---------- Interaction handling ----------
-// These functions are used by commands.js via createDispatcher
-// eslint-disable-next-line no-unused-vars
+// Interaction handling
 const handleInteraction = createDispatcher({
   log,
   errLog,
@@ -314,7 +324,7 @@ const handleInteraction = createDispatcher({
 
 client.on('interactionCreate', handleInteraction);
 
-// ---------- Graceful shutdown handlers ----------
+// Graceful shutdown handlers
 process.on('SIGINT', async () => {
   log('[shutdown] SIGINT received, cleaning up...');
 
@@ -345,7 +355,7 @@ process.on('SIGTERM', async () => {
   process.exit(0);
 });
 
-// ---------- Load preferences and login ----------
+// Load preferences and login
 client.once('ready', async () => {
   log(`✅ Logged in as ${client.user.tag}`);
   await loadUserPreferences();

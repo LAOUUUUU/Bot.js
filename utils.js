@@ -1,17 +1,20 @@
 // utils.js
 // Centralized utilities shared across the bot
-// admin.js
-// Handles admin blacklist loading and checks
 
 const {MAX_CHANNELS_IN_MEMORY, RECENT_HISTORY_SIZE} = require("./config");
+
 const log = (...args) => console.log(new Date().toISOString(), ...args);
 const errLog = (...args) => console.error(new Date().toISOString(), ...args);
-const API_POOL = ['redgifs', 'rule34', 'gelbooru', 'e621', 'realbooru', 'hypnohub', 'yandere', 'konachan', 'danbooru'];
+const API_POOL = [
+    'redgifs', 'rule34', 'gelbooru', 'e621', 'realbooru',
+    'hypnohub', 'yandere', 'konachan',
+    'xbooru', 'rule34paheal', 'atfbooru', 'behoimi', 'reddit'
+];
 const IMAGE_EXTS = ['.jpg', '.jpeg', '.png', '.webp'];
 const VIDEO_EXTS = ['.mp4', '.webm', '.mov'];
 const recentGifs = new Map();
 
-function getRandomGif(items, channelId,recentGifs) {
+function getRandomGif(items, channelId) {
     if (!items?.length) return null;
 
     if (!recentGifs.has(channelId)) {

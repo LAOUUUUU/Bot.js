@@ -7,14 +7,14 @@ function shouldDefer(cmd) {
   // Network-heavy operations that should defer replies
   return new Set([
     'nsfw', 'rule34', 'gelbooru', 'e621', 'realbooru', 'hypnohub', 'yandere', 'konachan', 'danbooru',
-    'trending', 'random'
+    'trending', 'random','xbooru','rule34paheal','atfbooru','behoimi','reddit'
   ]).has(cmd);
 }
 
 function requiresNSFW(cmd) {
   return new Set([
     'nsfw', 'rule34', 'gelbooru', 'e621', 'realbooru', 'hypnohub', 'yandere', 'konachan', 'danbooru',
-    'trending', 'random'
+    'trending', 'random','xbooru','rule34paheal','atfbooru','behoimi','reddit'
   ]).has(cmd);
 }
 
@@ -49,6 +49,11 @@ function createDispatcher(deps) {
     'yandere': 'yandere',
     'konachan': 'konachan',
     'danbooru': 'danbooru',
+    'xbooru': 'xbooru',
+    'rule34paheal': 'rule34paheal',
+    'atfbooru': 'atfbooru',
+    'behoimi': 'behoimi',
+    'reddit': 'reddit',
   };
 
   return async function handleInteraction(interaction) {
@@ -403,6 +408,17 @@ function createDispatcher(deps) {
         }
       }
 
+      if (cmd === 'reddit') {
+        const subreddit = interaction.options.getString('subreddit') || 'nsfw+gonewild';
+        const filterType = interaction.options.getString('type') || 'any';
+
+        const res = await postRandomToChannel(interaction.channel, 'reddit', subreddit, userId, filterType);
+        if (res.ok) {
+          return interaction.editReply('✅ Posted!');
+        } else {
+          return interaction.editReply(`⚠️ No results or error: ${res.error}`);
+        }
+      }
       // unknown command fallback
       return interaction.reply({ content: '⚠️ Unknown command.', ephemeral: true });
 
